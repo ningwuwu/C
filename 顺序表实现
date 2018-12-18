@@ -1,0 +1,446 @@
+#include<stdio.h>
+#include<malloc.h>
+#include<assert.h>
+
+//#define MAX_SIZE 100
+//typedef int DataType;
+//
+//typedef struct SeqList
+//{
+//	DataType data[MAX_SIZE];
+//	DataType length;
+//}SeqList;
+////顺序表的初始化就是把顺序表初始化成空的顺序表，再把顺序表长度置0即可
+//void InitSeqList(SeqList *pList)
+//{
+//	if(pList == NULL)
+//	{
+//		return ;
+//	}
+//	pList->length = 0;
+//}
+////获取顺序表的长度，顺序表元素个数即位顺序表长度
+//int GetLengthSeqList(SeqList *pList)
+//{
+//	assert(pList);
+//	return pList->length;
+//}
+////查找顺序表中第i个元素，按顺序查找，判断是否合法即可
+//int FindiSeqList(SeqList *pList, int i)
+//{
+//	assert(pList);
+//	if(pList->length < 1 || pList->length > GetLengthSeqList(pList))
+//	{
+//		return 0;
+//	}
+//	//因为数组下标是从0开始的，而数组元素是从1开始的。
+//	return pList->data[i-1];
+//}
+////插入操作：在指定位置i插入一个元素，首先考虑顺序表是不是已经满了，插入位置合不合法，
+////其次，插入后，i之后所有元素都必须向后移动移位，必须得从最后一位开始移动，然后将i-1这个数组下标的元素改为d，最后再将顺序表长度+1。
+//int InsertSeqList(SeqList *pList, int i, DataType d)
+//{
+//	int k = 0;
+//	assert(pList);
+//	if(pList->length < 1 || pList->length > GetLengthSeqList(pList))
+//	{
+//		return 0;
+//	}
+//	else if(pList->length >= MAX_SIZE)
+//	{
+//		return 0;
+//	}
+//	else
+//	{
+//		//pList->length这里求出来的是元素的个数，元素个数比数组下标大1，正好就i之后所有元素向后移了一位
+//		//这里k=i-1很重要，因为顺序表是从0开始的，如果不-1，我们就找不到i在顺序表中正确的位置，以至于i在顺序表中原本的那个值就无法给后面的元素
+//		for(k = pList->length; k >= i-1; k--)
+//		{
+//			pList->data[k+1] = pList->data[k];
+//		}
+//		pList->data[i-1] = d;
+//		pList->length++;
+//		return 1;
+//	}
+//}
+////删除操作：在指定位置i删除一个元素d，需要将表中第i个元素之后的所有元素向前移位移位，再将顺序表长度-1.
+//void DeleteSeqList(SeqList *pList, int i)
+//{
+//	assert(pList);
+//	if(pList->length < 1 || pList->length > GetLengthSeqList(pList))
+//	{
+//		return ;
+//	}
+//	else
+//	{
+//		while(i < pList->length)
+//		{
+//			pList->data[i-1] = pList->data[i];
+//			i++;
+//		}
+//		pList->length--;
+//	}
+//}
+////按内容查找：先找到这个元素，然后返回这个元素的下标+1即可
+//int GetLocateSeqList(SeqList *pList, DataType d)
+//{
+//	int i = 0;
+//	assert(pList);
+//	for(i = 0; i <= pList->length; i++)
+//	{
+//		if(pList->data[i] == d)
+//		{
+//			return i+1;
+//		}
+//	}
+//	return 0;
+//}
+////判断顺序表是否为满顺序表
+//int IsFullSeqList(SeqList *pList)
+//{
+//	assert(pList);
+//	return (pList->length == MAX_SIZE);
+//}
+////判断顺序表是否为空：如果顺序表的长度为0，则顺序表为空
+//int IsEmptySeqList(SeqList *pList)
+//{
+//	assert(pList);
+//	if(pList->length == 0)
+//	{
+//		return 1;
+//	}
+//	return 0;
+//}
+////尾插：先检测顺序表是否已满，满了就返回，未满就可以插入，在顺序表最后一个元素在接上一个元素，结束后给顺序表长度+1.
+//void PushBackSeqList(SeqList *pList, DataType d)
+//{
+//	assert(pList);
+//	if(IsFullSeqList(pList))
+//	{
+//		return ;
+//	}
+//	else
+//	{
+//		pList->data[pList->length] = d;
+//		pList->length++;
+//	}
+//}
+////尾删：先判断顺序表是不是为空，删掉最后一个元素，然后顺序表长度-1.
+//void PopBackSeqList(SeqList *pList)
+//{
+//	assert(pList);
+//	if(IsEmptySeqList(pList))
+//	{
+//		return ;
+//	}
+//	else
+//	{
+//		pList->length--;
+//	}
+//}
+////头插：先判断顺序表是否为满顺序表，如果满就返回，不满就插入，相当于从第i个位置插入一个元素，只不过这个i位置为1.
+//void PushFrontSeqList(SeqList *pList, DataType d)
+//{
+//	int i = 0;
+//	assert(pList);
+//	if(IsFullSeqList(pList))
+//	{
+//		return ;
+//	}
+//	else
+//	{
+//		for(i = pList->length; i >= 0; i--)
+//		{
+//			pList->data[i+1] = pList->data[i];
+//		}
+//		pList->data[0] = d;
+//		pList->length++;
+//	}
+//}
+////头删：先判断顺序表是否为空，如果不为空，从1位置处开始给前一位赋值。
+//void PopFrontSeqList(SeqList *pList)
+//{
+//	int i = 0;
+//	assert(pList);
+//	if(IsEmptySeqList(pList))
+//	{
+//		return ;
+//	}
+//	else
+//	{
+//		for(i = 0; i < pList->length; i++)
+//		{
+//			pList->data[i] = pList->data[i+1];
+//		}
+//		pList->length--;
+//	}
+//}
+////求顺序表的大小
+//int SizeOfSeqList(SeqList *pList)
+//{
+//	assert(pList);
+//	return (pList->length);
+//}
+////清空顺序表，因为不存在内存开辟，也不需要内存释放，只需将顺序表的长度置为0即可。
+//void ClearSeqList(SeqList *pList)
+//{
+//	assert(pList);
+//	pList->length = 0;
+//}
+//void PrintSeqList(SeqList *pList)
+//{
+//	int i;
+//	for(i = 0; i < pList->length; i++)
+//	{
+//		printf("%3d", pList->data[i]);
+//	}
+//	printf("\n");
+//}
+////冒泡排序
+//void BubbleSortSeqList(SeqList *pList)
+//{
+//	int i = 0;
+//	int j = 0;
+//	assert(pList);
+//	//for(i = 0; i < pList->length-1; i++)
+//	//{
+//	//	for(j = 0; j < pList->length - i - 1; j++)
+//	//	{
+//	//		if(pList->data[j] < pList->data[j+1])
+//	//		{
+//	//			int tmp = pList->data[j];
+//	//			pList->data[j] = pList->data[j+1];
+//	//			pList->data[j+1] = tmp;
+//	//		}
+//	//	}
+//	//}
+//	for(i = 0; i < pList->length-1; i++)
+//	{
+//		for(j = pList->length-2; j >= i; j--)
+//		{
+//			if(pList->data[j] < pList->data[j+1])
+//			{
+//				int tmp = pList->data[j];
+//				pList->data[j] = pList->data[j+1];
+//				pList->data[j+1] = tmp;
+//			}
+//		}
+//	}
+//}
+//
+//
+////选择排序：
+//void SelectSortSeqList(SeqList *pList)
+//{
+//	int i, j, min;
+//	assert(pList);
+//	for(i = 0; i < pList->length-1; i++)
+//	{
+//		min = i;
+//		for(j = i+1; j < pList->length; j++)
+//		{
+//			if(pList->data[min] > pList->data[j])
+//			{
+//				min = j;
+//			}
+//		}
+//		if(min != i)
+//		{
+//			int tmp = pList->data[i];
+//			pList->data[i] = pList->data[min];
+//			pList->data[min] = tmp;
+//		}
+//	}
+//}
+////选择排序优化：定义两个指针，两边同时进行选择，会比之前的版本快一半。
+//void SelectSortSeqList_OP(SeqList *pList)
+//{
+//	int i = 0;
+//	int tmp;
+//	int left = 0;
+//	int right = pList->length-1;
+//	
+//	assert(pList);
+//	while(left < right && (left < pList->length && right >= 0))
+//	{
+//		int min = left;
+//		int max = right;
+//		for(i = left; i <= right; i++)
+//		{
+//			if(pList->data[i] < pList->data[min])
+//				min = i;
+//			if(pList->data[i] > pList->data[max])
+//				max = i;
+//		}
+//		tmp = pList->data[max];
+//		pList->data[max] = pList->data[right];
+//		pList->data[right] = tmp;
+//		//特别注意这条判断：
+//		//因为这是最极端的情况，最大值和最小值分别在最两边，当改变一边的值之后，比如这个情况，min=5，max=0，但是max之前已经将0位置的值和right的值交换了，
+//		//而此时如果不判断min的位置，因为right里面的值已经改了，在用min去取right里面的值已经不合理了，只能找被max刚才交换出去的值，才是正确的
+//		if(min == right)
+//			min = max;
+//		tmp = pList->data[min];
+//		pList->data[min] = pList->data[left];
+//		pList->data[left] = tmp;
+//		left++;
+//		right--;
+//	}	
+//}
+////二分查找
+//int BinarySearchSeqList(SeqList *pList, DataType d)
+//{
+//	int left = 0;
+//	int right = pList->length-1;
+//	int mid = (pList->length-1)/2;
+//	assert(pList);
+//	while(left <= right)
+//	{
+//		if(d < pList->data[mid])
+//		{
+//			right = mid - 1;
+//			mid = (left + right)/2;
+//		}
+//		else if(d > pList->data[mid])
+//		{
+//			left = mid + 1;
+//			mid = (left + right)/2;
+//		}
+//		else
+//			return mid;
+//	}
+//	return -1;
+//}
+////二分查找递归实现
+//int BinarySearchSeqList_R(SeqList *pList, int left, int right, DataType d)
+//{
+//	int mid = (left + right)/2;
+//	assert(pList);
+//	while(left <= right)
+//	{
+//		if(d < pList->data[mid])
+//			right = mid - 1;
+//		else if(d > pList->data[mid])
+//			left = mid + 1;
+//		else
+//			return mid;
+//		return BinarySearchSeqList_R(pList, left, right, d);
+//	}
+//	return -1;
+//}
+////反转顺序表
+//void ReverseSeqList(SeqList *pList)
+//{
+//	int left = 0;
+//	int right = pList->length-1;
+//	while(left < pList->length/2)
+//	{
+//		int tmp = pList->data[left];
+//		pList->data[left] = pList->data[right];
+//		pList->data[right] = tmp;
+//		left++;
+//		right--;
+//	}
+//}
+//void test()
+//{
+//	SeqList s;
+//	InitSeqList(&s);
+//	PushBackSeqList(&s,2);
+//	PushBackSeqList(&s,1);
+//	PushBackSeqList(&s,4);
+//	PushBackSeqList(&s,3);
+//	
+//	BubbleSortSeqList(&s);
+//	PrintSeqList(&s);
+//	PushFrontSeqList(&s,10);
+//	PushFrontSeqList(&s,9);
+//	SelectSortSeqList_OP(&s);
+//	BinarySearchSeqList(&s, 9);
+//	PrintSeqList(&s);
+//	PopFrontSeqList(&s);
+//	PopFrontSeqList(&s);
+//	PopFrontSeqList(&s);
+//	PrintSeqList(&s);
+//	InsertSeqList(&s, 3, 6);
+//	PrintSeqList(&s);
+//	DeleteSeqList(&s, 3);
+//	PrintSeqList(&s);
+//	ReverseSeqList(&s);
+//	PrintSeqList(&s);
+//	GetLocateSeqList(&s,4);
+//	printf("%d\n",s);
+//}
+//
+//int main()
+//{
+//	test();
+//	getchar();
+//	return 0;
+//}
+
+
+
+
+
+
+//将静态顺序表改为动态顺序表
+
+
+
+
+//typedef int DataType;
+//typedef struct StrSeqList
+//{
+//	DataType *data;//数组
+//	DataType length;//长度
+//	DataType capacity;//容量
+//}StrSeqList;
+//void InitStrSeqList(StrSeqList *spList)
+//{
+//	assert(spList);
+//	spList->data = (DataType*)malloc(sizeof(DataType)*3);
+//	spList->capacity = 3;
+//	spList->length = 0;
+//}
+//int IsFullCapacityStrSeqList(StrSeqList *spList)
+//{
+//	assert(spList);
+//	if(spList->capacity == spList->length)
+//		return 1;
+//	else
+//		return 0;
+//}
+//void PushBackStrSeqList(StrSeqList *spList, DataType d)
+//{
+//	assert(spList);
+//	if(IsFullCapacityStrSeqList(spList))
+//	{
+//		spList->capacity = spList->capacity * 2 + 3;
+//		spList->data = (DataType*)realloc(spList->data,sizeof(DataType*) * spList->capacity);
+//	}
+//	spList->data[spList->length] = d;
+//	spList->length++;
+//}
+//void PopBackStrSeqList(StrSeqList *spList)
+//{
+//	assert(spList);
+//	spList->length--;
+//}
+//int main()
+//{
+//	StrSeqList s;
+//	InitStrSeqList(&s);
+//	PushBackStrSeqList(&s,1);
+//	PushBackStrSeqList(&s,1);
+//	PushBackStrSeqList(&s,1);
+//	PushBackStrSeqList(&s,1);
+//	PopBackStrSeqList(&s);
+//	getchar();
+//	return 0;
+//}
+
+
+
+//C++方式实现静态顺序表
+
