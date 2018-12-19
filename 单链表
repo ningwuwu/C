@@ -1,0 +1,475 @@
+//.h
+#ifndef __LINKLIST_H__ 
+#define __LINKLIST_H__ 
+#include<stdio.h>
+#include<assert.h>
+#include<malloc.h>
+#include<stdlib.h>
+typedef int DataType; 
+typedef struct Node 
+{ 
+  DataType data; 
+  struct Node* next; 
+}Node,*pNode, List, *pList; 
+
+void InitLinkList(pList* pplist); 
+pNode BuyNode(DataType d); 
+void DestroyLinkList(pList* pplist); 
+void PushBack(pList* pplist, DataType d); 
+void PopBack(pList* pplist); 
+void PushFront(pList* pplist, DataType d); 
+void PopFront(pList* pplist); 
+pNode Find(pList plist, DataType d); 
+
+//在指定位置之前插入一个值 
+void Insert(pList* pplist, pNode pos, DataType d); 
+//指定位置删除 
+void Erase(pList* pplist, pNode pos); 
+void Remove(pList* pplist, DataType d); 
+void RemoveAll(pList* pplist, DataType d); 
+void EraseNotTailNode(pNode pos); 
+void PrintLinkList(pList plist); 
+int GetListLength(pList plist); 
+//链表面试题 
+
+// 逆序打印单项链表 
+void PrintTailToHead(pList plist); 
+// 从尾到头打印单链表 
+void PrintListFromTail2Front(pList plist); 
+
+// 删除单链表的非尾结点，不能遍历链表 
+void DeleteListNotTail(pNode pos); 
+
+// 在单链表非头结点前插入新节点，要求不能遍历链表 
+void InsertPosFront(pNode pos, DataType data); 
+
+// 用单链表模拟实现约瑟夫环 
+pNode JosephCircle(pList plist, int M); 
+
+// 用冒泡排序对单链表进行排序 
+void BubbleSort(pList plist); 
+
+// 查找单链表的中间结点，要求只能遍历一次链表 
+pNode FindMiddleNode(pList plist); 
+
+// 查找单链表的倒数第K个结点，要求只能遍历一次链表 
+pNode FindLastKNode(pList plist, int K); 
+
+// 单链表的逆置 
+void ReverseList(pList *plist); 
+pNode ReverseListOP(pList plist); 
+
+// 合并两个有序链表，合并成功后依然有序 
+pNode MergeList(pList plist1, pList plist2); 
+
+// 检测单链表是否带环 
+pNode HasListCircle(pList plist); 
+
+// 求环的长度 
+int GetCircleLen(pList plist); 
+
+// 求环的入口点 
+pNode GetEnterNode(pList plist, pNode pMeetNode); 
+
+// 判断两个单链表是否相交(链表不带环) 
+int IsListCross(pList plist1, pList plist2); 
+
+// 若相交，求交点 
+pNode GetCrossNode(pList plist1, pList plist2); 
+
+// 检测两个链表是否相交，链表可能带环 
+int IsListCrossWithCircle(pList plist1, pList plist2); 
+
+// 复杂链表的赋值 
+pNode CopyComplex(pNode pHead); 
+
+#endif //__LINKLIST_H__ 
+//.c
+#include"LinkList.h"
+//初始化链表
+void InitLinkList(pList* pplist)
+{
+	assert(pplist);
+	*pplist = NULL;
+}
+//创建节点函数
+pNode BuyNode(DataType d)
+{
+	pList newNode = NULL;
+	newNode = (pList)malloc(sizeof(Node));
+	if(NULL == newNode)
+	{
+		printf("out of memory.\n");
+		exit(-1);
+	}
+	else
+	{
+		newNode->data = d;
+		newNode->next = NULL;
+	}
+}
+//销毁节点
+void DestroyLinkList(pList* pplist)
+{
+	pList cur = *pplist;
+	while(cur->next)
+	{
+		pNode node = cur;
+		cur = cur->next;
+		free(node);
+		node == NULL;
+	}
+}
+//尾插
+void PushBack(pList* pplist, DataType d)
+{
+	assert(pplist);
+	if(pplist == NULL)
+	{
+		pplist = (pList*)BuyNode(d);
+	}
+	else
+	{
+		pList cur = NULL;
+		cur = *pplist;
+		while(NULL == cur->next)
+		{
+			cur = cur->next;
+		}
+		cur->next =  BuyNode(d);
+	}
+}
+//尾删
+void PopBack(pList* pplist)
+{
+	assert(pplist);
+	if(*pplist == NULL)
+		return;
+	else if((*pplist)->next == NULL)
+	{
+		pList temp = NULL;
+		temp = *pplist;
+		free(temp);
+		temp = NULL;
+		pplist = NULL;
+	}
+	else
+	{
+		pList cur = NULL;
+		cur = *pplist;
+		while(cur->next->next)
+		{
+			cur = cur->next;
+		}
+		cur->next = NULL;
+	}
+}
+//头插
+void PushFront(pList* pplist, DataType d)
+{
+	
+	pList cur = NULL;
+	assert(pplist);
+	cur = *pplist;
+	pNode pre = BuyNode(d);
+	pre->next = cur;
+    *pplist = pre;
+}
+//头删
+void PopFront(pList* pplist)
+{
+	
+	pList cur = NULL;
+	assert(pplist);
+	cur = *pplist;
+	if(NULL == *pplist)
+	{
+		return;
+	}
+	else if(NULL == (*pplist)->next)
+	{
+		*pplist = NULL;
+	}
+	else
+	{
+		*pplist = cur->next;
+		free(cur);
+		cur = NULL;
+	}
+}
+//根据所给数据找节点并返回节点
+pNode Find(pList plist, DataType d)
+{
+	
+	pNode cur = plist;
+	assert(plist);
+	while(plist)
+	{
+		if(d == cur->data)
+		{
+			break;
+			cur = cur->next;
+		}
+		return cur;
+	}
+}
+//指定位置插入一个数据
+void Insert(pList* pplist, int pos, DataType d)
+{
+	
+	pList temp = *pplist;
+	assert(pplist);
+	for(int i = 1;i < pos;i++)
+	{
+		if(temp == NULL)
+		{
+			printf("插入位置无效>\n");
+			return;
+		}
+		temp = temp->next;
+	}
+	pList cur = BuyNode(d);
+	cur->next = temp->next;
+	temp->next = cur;
+	return;
+}
+//指定位置删除数据
+void Erase(pList* pplist, int pos)
+{
+	
+	pList temp = *pplist;
+	assert(pplist);
+	for(int i = 1;i < pos;i++)
+	{
+		if(temp == NULL)
+		{
+			printf("插入位置无效>\n");
+			return;
+		}
+		temp = temp->next;
+	}
+	pList cur = temp->next;
+	temp->next = temp->next->next;
+	free(cur);
+	return;
+}
+//给定数据删除该数据
+void Remove(pList* pplist, DataType d)
+{
+	
+	pList cur = *pplist;
+	assert(pplist);
+	while(cur->next->data == d)
+	{
+		pList pre = cur;
+		pre->next = cur->next->next;
+	}
+	free(cur);
+	return;
+}
+//给定数据删除链表中所有该数据
+void RemoveAll(pList* pplist, DataType d)
+{
+	
+	pList cur = *pplist;
+	assert(pplist);
+	while(cur->next->data == d)
+	{
+		pList pre = cur;
+		pre->next = cur->next->next;
+	}
+	cur = cur->next;
+	RemoveAll((pList*) cur,d);
+	free(cur);
+}
+//求链表长度（节点个数）
+int GetListLength(pList plist)
+{
+	
+	pList cur = plist;
+	assert(plist);
+	DataType num = 0;
+	while(cur)
+	{
+		num++;
+		cur = cur->next;
+	}
+	return num;
+}
+//打印函数
+void PrintLinkList(pList plist)
+{
+	
+	pList cur = plist;
+	assert(plist);
+	while(cur)
+	{
+		printf("%d\n",cur->data);
+		cur = cur->next;
+	}
+	printf("NULL\n");
+}
+ // 用单链表模拟实现约瑟夫环 
+pNode JosephCircle(pList plist, int M)
+{
+	pNode pPreNode = plist;
+	pNode pCurNode = NULL;
+	assert(plist);
+	if(NULL == plist)
+	{
+		exit(0);
+		return;
+	}
+	while(pPreNode->next == pCurNode)
+	{
+		while(--M)
+		{
+			pCurNode = pPreNode;
+			pPreNode = pPreNode->next;
+		}
+		pCurNode->next = pPreNode->next;
+		free(pPreNode);
+		pPreNode = pCurNode->next;
+	}
+
+}
+// 用冒泡排序对单链表进行排序 
+void BubbleSort(pList plist)
+{
+	pNode pPre = plist;
+	pNode pCur = NULL;
+	assert(plist);
+	while(pPre != pCur)
+	{
+		while(pPre->next != pCur)
+		{
+			if(pPre->data > pPre->next->data)
+			{
+				DataType tmp = pPre->data;
+				pPre->data = pCur->data;
+				pCur->data = tmp;
+			}
+			pPre = pPre->next;
+		}
+	}
+
+}
+// 查找单链表的中间结点，要求只能遍历一次链表 
+pNode FindMiddleNode(pList plist)
+{
+	pNode pFast = plist;
+	pNode pSlow = plist;
+	assert(plist);
+	pFast = pFast->next->next;
+	pSlow = pSlow->next;
+	while(pFast->next == NULL)
+	{
+		return pSlow;
+	}
+}
+// 查找单链表的倒数第K个结点，要求只能遍历一次链表 
+//定义两个快慢指针，快指针前走K步，然后满指针开始走，快指针的下一个为空时返回慢指针即可
+pNode FindLastKNode(pList plist, int K)
+{
+	pNode pFast = plist;
+	pNode pSlow = plist;
+	assert(plist);
+	while(--K)
+	{
+		if(pFast == NULL)
+			return;
+		pFast = pFast->next;
+	}
+	while(pFast)
+	{
+		pSlow = pSlow->next;
+		pFast = pFast->next;
+	}
+	return pSlow;
+}
+// 合并两个有序链表，合并成功后依然有序 
+// 
+pNode MergeList(pList plist1, pList plist2)
+{
+	pNode newNode = NULL;
+	while(plist1->next != NULL || plist2->next != NULL)
+	{
+	while(plist1->data < plist2->data)
+	{
+		newNode->data = plist1->next->data;
+	}
+	while(plist1->data > plist2->data)
+	{
+		newNode->data = plist2->data;
+	}
+	plist1 = plist1->next;
+	plist2 = plist2->next;
+	}
+}
+// 检测单链表是否带环 
+pNode HasListCircle(pList plist)
+{
+	pNode pFast = plist;
+	pNode pSlow = plist;
+	while(pFast && pFast->next)
+	{
+		pFast = pFast->next->next;
+		pSlow = pSlow->next;
+		if(pFast == pSlow)
+			return pFast;
+	}
+	return;
+}
+// 求环的入口点 
+pNode GetEnterNode(pList plist, pNode pMeetNode)
+{
+	while(plist != pMeetNode)
+	{
+		plist = plist->next;
+		pMeetNode = pMeetNode->next;
+	}
+	return pMeetNode;
+}
+// 求环的长度 
+int GetCircleLen(pList plist,pNode pMeetNode)
+{
+	int len = 1;
+	while(plist != pMeetNode)
+	{
+		len++;
+		plist = plist->next;
+	}
+	plist = plist->next;
+	return len;
+}
+// 判断两个单链表是否相交(链表不带环) 
+int IsListCross(pList plist1, pList plist2)
+{
+	while(plist1->next)
+		plist1 = plist1->next;
+	while(plist2->next)
+		plist2 = plist2->next;
+	if(plist1 == plist2)
+		return 1;
+	else 
+		return 0;
+}
+// 若相交，求交点 
+pNode GetCrossNode(pList plist1, pList plist2)
+{
+	
+}
+//1. 逆序打印单项链表 
+void PrintTailToHead(pList plist)
+{
+	pList cur = plist;
+	assert(plist);
+	if(cur == NULL)
+	{
+		return;
+	}
+	else
+	{
+		PrintTailToHead(cur->next);
+		printf("%d\n",cur->data);
+	}
