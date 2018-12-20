@@ -1,0 +1,198 @@
+//.h
+#ifndef __MAZE_H__
+#define __MAZE_H__
+#define STACK_INIT_SIZE 100
+#include<malloc.h>
+#include<stdio.h>
+#include<stdlib.h>
+#define MAX 8
+typedef struct
+{
+	int x;
+	int y;
+}Pos;
+typedef struct
+{
+	Pos *base;//栈底
+	Pos *top;//栈顶
+	int Stacksize;//当前已分配的栈内空间
+}Stack;
+typedef struct 
+{
+	int map[MAX][MAX];
+}maze,*Maze;
+
+
+void InitStack(Stack &S);
+void DestroyStack(Stack &S);
+bool EmptyStack(Stack S);
+void PushStack(Stack &S,Pos d);
+void PopStack(Stack &S,Pos &d);
+void GetTopStack(Stack S,Pos &d);
+
+//****************maze*************************
+void InitMaze(Maze M);
+void PrintMaze(Maze M);
+int IsValidEnter(Maze M,Pos enter);
+int IsPass(Maze M,Pos pos);
+int IsExit(Maze M,Pos pos,Pos enter);
+void _PassMaze(Maze M,Pos enter,Stack S);
+void PassMazeNor(Maze M,Pos enter);
+
+
+
+#endif //__MAZE_H__
+//.c
+#include"Maze.h"
+
+//**********************stack*************************
+void InitStack(Stack &S)
+{
+	S.base = (Pos*)malloc(STACK_INIT_SIZE * sizeof(Pos));
+	S.top = S.base;
+	S.Stacksize = STACK_INIT_SIZE;
+}
+void DestroyStack(Stack &S)
+{
+	if(S.base == S.top)
+		return;
+	else
+	{
+		free(S.base);
+		S.base = NULL;
+	}
+}
+
+bool EmptyStack(Stack S)
+{
+	if(S.base == S.top)
+		return true;
+	else
+		return false;
+}
+void PushStack(Stack &S,Pos d)
+{
+	if(S.top - S.base == S.Stacksize)
+	{
+		printf("栈已满>\n");
+		exit(-1);
+	}
+	else
+	{
+		*S.top = d;
+		++S.top;
+	}
+}
+
+void PopStack(Stack &S,Pos &d)
+{
+	if(!EmptyStack(S))
+		d = *--S.top;
+}
+void GetTopStack(Stack S,Pos &d)
+{
+	if(S.top > S.base)
+	{
+		d = *--S.top;
+	}
+}
+
+//********************maze******************
+
+void PrintMaze(Maze M)
+{
+	int i = 0;
+	int j = 0;
+	for(;i < MAX;++i)
+	{
+		for(;j < MAX;++j)
+		{
+			printf("%d",M->map[i][j]);
+		}
+		printf("\n");
+	}
+}
+int IsValidEnter(Maze M,Pos enter)
+{
+	if(0 == enter.x || MAX - 1 == enter.x || 0 == enter.y || MAX - 1 == enter.y)
+	{
+		if(1 == M->map[enter.x][enter.y])
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+int IsPass(Maze M,Pos pos)
+{
+	return (1 == M->map[pos.x][pos.y]);
+}
+int IsExit(Maze M,Pos pos,Pos enter)
+{
+	if(pos.x == enter.x && pos.y == enter.y)
+		return 0;
+	if(0 == pos.x || MAX - 1 == pos.x || 0 == pos.y || MAX - 1 == pos.y)
+		return 1;
+	return 0;
+}
+void _PassMaze(Maze M,Pos enter,Stack S)
+{
+	Pos next;
+	Pos pos;
+	if(!IsValidEnter(M,enter))
+		return;
+	InitStack(S);
+	PushStack(S,enter);
+	while(! EmptyStack(S))
+	{
+		
+		M->map[pos.x][pos.y] = 2;
+		if(IsExit(M,pos,enter));
+		return;
+		//up
+		next = pos;
+		next.x -= 1;
+		if(IsPass(M,next))
+		{
+			PushStack(S,enter);
+			continue;
+		}
+		//left
+		next = pos;
+		next.y -= 1;
+		if(IsPass(M,next))
+		{
+			PushStack(S,next);
+			continue;
+		}
+		//right
+		next = pos;
+		next.y += 1;
+		if(IsPass(M,next))
+		{
+			PushStack(S,next);
+			continue;
+		}
+		//down
+		next = pos;
+		next.x += 1;
+		if(IsPass(M,next))
+		{
+			PushStack(S,next);
+			continue;
+		}
+		PopStack(S,enter);
+		M->map[pos.x][pos.y] = 3;
+	}
+}
+void InitMaze(Maze M,int map[MAX][MAX])
+{
+	int i = 0;
+	int j = 0;
+	for(;i < MAX;++i)
+	{
+		for(;j < MAX;++j)
+		{
+			M->map[i][j] = map[i][j];
+		}
+}
